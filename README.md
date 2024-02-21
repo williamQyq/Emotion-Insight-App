@@ -2,6 +2,14 @@
 
 The Emotion Sentiment Particle System is an innovative visualization tool designed to display the emotional distribution of text through a dynamic and interactive particle system. By integrating natural language processing (NLP) capabilities, this system analyzes the emotional sentiment behind a user-inputted prompt and visually represents this analysis using particles of varying colors. Each color corresponds to a specific emotion, creating a vivid and intuitive representation of the text's emotional content.
 
+## Youtube & ScreenShot
+🥰Watch it on [Youtube](https://youtu.be/vDZ5GwFlwOQ)
+
+![UI](./pic/input.png)
+![Visual](./pic/visual.png)
+
+
+
 ## Before Started
 ```Currently, the prediction is randomly selected,and the TensorFlow model is not used due to the backend requirement. Additionally, some NLP libraries for tokenization and lemmatization require worker threads, which are not supported in the browser.```
 
@@ -66,6 +74,4 @@ npm start
 └── vite.config.js
 ```
 
-![UI](./pic/input.png)
-![Visual](./pic/visual.png)
 
