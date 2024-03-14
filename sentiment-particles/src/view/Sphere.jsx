@@ -33,6 +33,7 @@ export default class Sphere extends Component {
         (accum, value) => accum + value
       );
 
+      //recolor the particles based on the new prediction
       const systemProps = Object.keys(predicts).map((emo) => ({
         color: this.emoColors[emo],
         num: Math.round((predicts[emo] / totalNumEmotions) * 1000),

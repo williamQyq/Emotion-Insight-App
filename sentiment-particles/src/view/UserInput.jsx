@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+
+//User input area style
 const textareaStyle = {
   resize: "none",
   overflow: "hidden",
@@ -20,6 +22,10 @@ export default class UserInput extends Component {
     this.textareaRef = React.createRef();
   }
 
+  /**
+   * resize the textarea based on the user input
+   * @param {Event} e
+   */
   handleTextChange = (e) => {
     e.preventDefault();
     const textarea = this.textareaRef.current;
@@ -29,6 +35,10 @@ export default class UserInput extends Component {
     });
   };
 
+  /**
+   * Ctrl+Enter or Cmd+Enter to send the user input
+   * @param {Event} e
+   */
   handleKeyDown = (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
       e.preventDefault();
@@ -37,6 +47,9 @@ export default class UserInput extends Component {
     }
   };
 
+  /**
+   * Send the user input to get the sentiment prediction
+   */
   sendInput = () => {
     //Predict the sentiment from the user input
     this.props.addSentiPredictFromUser(this.state.userText);

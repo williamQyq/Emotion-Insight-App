@@ -10,8 +10,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      predicts: {},
-      prompts: [],
+      predicts: {}, //user sentiment prediction
+      prompts: [], //user prompts
     };
     this.tf = null;
     this.emotionClasses = [
@@ -30,7 +30,7 @@ export default class App extends Component {
 
   /**
    * Increment the sentiment prediction count
-   * @param {*} input //Text input from user
+   * @param {string} input //Text input from user
    */
   addSentiPredictFromUser = (input) => {
     //randomly pick a sentiment class
@@ -41,6 +41,7 @@ export default class App extends Component {
 
     let prompt = new EmotionPrompt(pick, input);
 
+    //update predict based on user input
     const updatedPredicts = { ...this.state.predicts };
     updatedPredicts[pick] = updatedPredicts[pick]
       ? updatedPredicts[pick] + 1
@@ -53,7 +54,7 @@ export default class App extends Component {
     alert(`Sentiment Prediction is ${pick}`);
 
     /**
-     * browser worker not support stemmer and tokenizer, need backend server to handle this
+     * browser worker does not support stemmer and tokenizer, need backend server to handle this
      */
     // this.tf
     //   .predict(input)

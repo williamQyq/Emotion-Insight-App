@@ -9,9 +9,7 @@ The Emotion Sentiment Particle System is an innovative visualization tool design
 🥰Watch it on [Youtube](https://youtu.be/vDZ5GwFlwOQ)
 
 ![UI](./pic/input.png)
-![Visual](./pic/visual.png)
-
-
+![Visual](./pic/visual.png)  
 
 ## Before Started
 ```Currently, the prediction is randomly selected,and the TensorFlow model is not used due to the backend requirement. Additionally, some NLP libraries for tokenization and lemmatization require worker threads, which are not supported in the browser.```
