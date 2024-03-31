@@ -6,9 +6,7 @@ export function useWorker(messageEventHandler) {
 }
 
 function createWorker(messageEventHandler) {
-	const worker = new Worker(new URL("../worker.js", import.meta.url), {
-		type: "module",
-	});
-	worker.addEventListener("message",messageEventHandler);
+	const worker = new Worker("./src/worker.js",{type:"module"});
+	worker.onmessage=messageEventHandler;
 	return worker;
 }

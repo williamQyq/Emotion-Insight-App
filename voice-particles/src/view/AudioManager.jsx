@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import AudioRecorder from "./AudioRecorder";
 import PropTypes from "prop-types";
 import Constants from "../utils/Constants";
@@ -6,6 +6,8 @@ import Constants from "../utils/Constants";
 export default function AudioManager({ transcriber }) {
 	const [audioData, setAudioData] = useState(undefined);
 	const [progress, setProgress] = useState(undefined);
+
+	const isAudioLoading = progress !== undefined;
 
 	const resetAudio = () => {
 		setAudioData(undefined);
@@ -28,11 +30,30 @@ export default function AudioManager({ transcriber }) {
 
 			const arrayBuffer = fileReader.result;
 			const decoded = await audioCTX.decodeAudioData(arrayBuffer);
+
+			// Check if audio is complete silence
+			function hasNonZeroSamples(buffer) {
+				for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+					const samples = buffer.getChannelData(channel);
+					for (let i = 0; i < samples.length; i++) {
+						if (samples[i] !== 0) return true;
+					}
+				}
+				return false;
+			}
+
+			if (hasNonZeroSamples(decoded)) {
+				console.log("Audio is not complete silence.");
+				// Audio is likely not complete silence.
+			} else {
+				console.log("Audio is complete silence.");
+				// Audio is likely complete silence.
+			}
 			// setProgress(undefined);
 			setAudioData({
 				buffer: decoded,
 				url: blobUrl,
-				source: "Recording",
+				source: "RECORDING",
 				mimeType: data.type,
 			});
 		};
@@ -53,8 +74,7 @@ export default function AudioManager({ transcriber }) {
 					/>
 				)}
 			</div>
-
-			<div>Progress: {progress}</div>
+			<AudioDataBar progress={isAudioLoading ? progress : +!!audioData} />
 			{audioData && (
 				<TranscribeButton
 					onClick={() => {
@@ -110,11 +130,12 @@ function RecordTile({ icon, text, setAudioData }) {
 		setAudioBlob(blob);
 	};
 
-	const onSubmit = () => {
+	const onSubmit = useCallback(() => {
+		console.log("submitting audio data");
 		setAudioData(audioBlob);
 		//reset audio blob
 		setAudioBlob(undefined);
-	};
+	}, [audioBlob]);
 	return (
 		<div>
 			<Tile icon={icon} text={text} />
@@ -140,6 +161,34 @@ function Tile({ icon, text }) {
 Tile.propTypes = {
 	icon: PropTypes.element.isRequired,
 	text: PropTypes.string,
+};
+
+function AudioDataBar({ progress }) {
+	return <ProgressBar progress={`${Math.round(progress * 100)}%`} />;
+}
+AudioDataBar.propTypes = {
+	progress: PropTypes.number.isRequired,
+};
+
+function ProgressBar({ progress }) {
+	// Ensure progress is a valid percentage
+	const progressStyle = { width: `${progress}%` };
+
+	return (
+		<div className="progress" style={{ height: "4px" }}>
+			<div
+				className="progress-bar"
+				role="progressbar"
+				style={progressStyle}
+				aria-valuenow={progress}
+				aria-valuemin="0"
+				aria-valuemax="100"
+			></div>
+		</div>
+	);
+}
+ProgressBar.propTypes = {
+	progress: PropTypes.string.isRequired,
 };
 
 function MicrophoneIcon() {

@@ -360,7 +360,11 @@ class WebmContainer extends WebmBase {
 		}
 	}
 	writeUint(x, draft = false) {
-		for (var bytes = 1, flag = 0x80; x >= flag && bytes < 8; bytes++, flag *= 0x80) { /* empty */ }
+		for (
+			var bytes = 1, flag = 0x80;
+			x >= flag && bytes < 8;
+			bytes++, flag *= 0x80
+		) {}
 		if (!draft) {
 			let value = flag + x;
 			for (let i = bytes - 1; i >= 0; i--) {

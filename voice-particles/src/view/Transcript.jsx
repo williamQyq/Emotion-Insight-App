@@ -3,9 +3,8 @@ import PropTypes from "prop-types";
 
 export default function Transcript({ transcribedData }) {
 	return (
-		<div>
-			{transcribedData &&
-				transcribedData.chunks &&
+		<>
+			{transcribedData?.chunks &&
 				transcribedData.chunks.map((chunk, index) => {
 					console.log("transcribed Text: ", chunk.text);
 					return (
@@ -14,10 +13,16 @@ export default function Transcript({ transcribedData }) {
 						</div>
 					);
 				})}
-		</div>
+		</>
 	);
 }
 
 Transcript.propTypes = {
-	transcribedData: PropTypes.object,
+	transcribedData: PropTypes.shape({
+		chunks: PropTypes.arrayOf(
+			PropTypes.shape({
+				text: PropTypes.string,
+			}),
+		),
+	}),
 };

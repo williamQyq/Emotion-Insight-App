@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { webmFixDuration } from "../utils/BlobFix.js";
 function getMimeType() {
@@ -19,7 +19,7 @@ function getMimeType() {
 
 export default function AudioRecorder({ onRecordingComplete }) {
 	const [recording, setRecording] = useState(false);
-	// const [duration, setDuration] = useState(0);
+	const [duration, setDuration] = useState(0);
 	const [recordedBlob, setRecordedBlob] = useState(null);
 
 	const streamRef = useRef(null);
@@ -87,6 +87,22 @@ export default function AudioRecorder({ onRecordingComplete }) {
 			startRecording();
 		}
 	};
+	useEffect(() => {
+		let stream = null;
+		if (recording) {
+			const timer = setInterval(() => {
+				setDuration((duration) => duration + 1000);
+			}, 1000);
+			return () => {
+				clearInterval(timer);
+			};
+		}
+		return () => {
+			if (stream) {
+				stream.getTracks().forEach((track) => track.stop());
+			}
+		};
+	}, [recording]);
 
 	return (
 		<div className="flex flex-col items-center justify-center">
@@ -99,7 +115,7 @@ export default function AudioRecorder({ onRecordingComplete }) {
 				}`}
 				onClick={handleToggleRecording}
 			>
-				{recording ? "Stop Recording" : "Start Recording"}
+				{recording ? `Stop Recording ${duration}` : "Start Recording"}
 			</button>
 			{recordedBlob && (
 				<audio className="w-full" ref={audioRef} controls>

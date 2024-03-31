@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { pipeline, env } from "@xenova/transformers";
-
 // Disable local models
 env.allowLocalModels = false;
 
@@ -39,6 +38,7 @@ self.addEventListener("message", async (event) => {
 	const message = event.data;
 	// Do some work...
 	// TODO use message data
+	console.log("Worker received message: ", message);
 	let transcript = await transcribe(
 		message.audio,
 		message.model,
@@ -47,6 +47,8 @@ self.addEventListener("message", async (event) => {
 		message.subtask,
 		message.language,
 	);
+	console.log("test output: ", transcript);
+	
 	if (transcript === null) return;
 
 	// Send the result back to the main thread

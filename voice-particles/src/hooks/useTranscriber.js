@@ -92,12 +92,14 @@ export function useTranscriber() {
 
 	const postRequest = useCallback(
 		async (audioData) => {
+			console.log("postRequest", audioData);
+
 			if (audioData) {
 				setTranscript(undefined);
 				setIsBusy(true);
 
 				let audio;
-				if (audioData.numberOfChannels === 2) {
+				 if (audioData.numberOfChannels === 2) {
 					const SCALING_FACTOR = Math.sqrt(2);
 
 					let left = audioData.getChannelData(0);
@@ -111,16 +113,14 @@ export function useTranscriber() {
 					// If the audio is not stereo, we can just use the first channel:
 					audio = audioData.getChannelData(0);
 				}
-
+				console.log("channel data", audio);
 				webWorker.postMessage({
 					audio,
 					model,
 					multilingual,
 					quantized,
-					// subtask: multilingual ? subtask : null,
-					// language: multilingual && language !== "auto" ? language : null,
-					subtask,
-					language
+					subtask: multilingual ? subtask : null,
+					language: multilingual && language !== "auto" ? language : null,
 				});
 			}
 		},
