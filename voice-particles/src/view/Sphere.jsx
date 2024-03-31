@@ -52,7 +52,7 @@ export default function Sphere({ predicts }) {
 		reCreateParticleSystem(predicts);
 	}, [predicts]);
 
-	return <div style={{ height: "70vh" }} ref={canvasRef} />;
+	return <div className="particle-system" ref={canvasRef} />;
 }
 
 Sphere.propTypes = {

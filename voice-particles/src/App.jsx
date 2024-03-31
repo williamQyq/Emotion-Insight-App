@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import UserInput from "./view/UserInput.jsx";
 import Sphere from "./view/Sphere.jsx";
-// import { EmotionTF } from "../models/Tensorflow.js";
 import EmotionPrompt from "./models/Emotion.js";
 import PredictList from "./view/PredictList.jsx";
 import AudioManager from "./view/AudioManager.jsx";
@@ -13,24 +12,6 @@ export default function App() {
 	const [predicts, setPredicts] = useState({}); //predicts for the particle system
 
 	const transcriber = useTranscriber();
-	// const tf = new EmotionTF();
-
-	/**
-	 * browser worker does not support stemmer and tokenizer, need backend server to handle this
-	 * @param {*} input
-	 * @returns
-	 */
-	// const getPrediction = async (input) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		tf.predict(input)
-	// 			.then((predictRaw) => this.tf.getPredictionClassIndex(predictRaw))
-	// 			.then((classIndex) => this.tf.getPredictClass(classIndex))
-	// 			.then((prediction) => {
-	// 				console.log("Prediction is: ", prediction);
-	// 				resolve(prediction);
-	// 			});
-	// 	});
-	// };
 	//get the predicts for particle system
 	const getPredicts = () => {
 		const predicts = {};
@@ -54,18 +35,24 @@ export default function App() {
 	};
 	return (
 		<div>
-			<div className="row text-center sticky-top shadow-lg p-15 bg-white">
+			<div className="header row text-center sticky-top shadow-lg p-15 bg-white">
 				<h1>🤫 My Whisper</h1>
 			</div>
-			<section className="sentiment-analysis">
-				<div className="row">
-					<div className="col-12 d-flex justify-content-center align-items-center">
-						<UserInput onReceiveUserInput={onReceiveUserInput} />
-					</div>
-				</div>
-				<div className="row">
-					<div className="col-12 d-flex justify-content-center align-items-center">
+			<div className="nlp-analysis">
+				<div className="row align-items-center">
+					<div
+						style={{ height: "100vh" }}
+						className="col-6 flex justify-content-center align-items-center"
+					>
 						<Sphere predicts={predicts} />
+					</div>
+					<div className="col-5 flex justify-content-center align-items-center">
+						<UserInput
+							transcribedData={transcriber.output}
+							onReceiveUserInput={onReceiveUserInput}
+						/>
+						<AudioManager transcriber={transcriber} />
+						{/* <Transcript transcribedData={transcriber.output} /> */}
 					</div>
 				</div>
 				<div className="row">
@@ -73,16 +60,7 @@ export default function App() {
 						<PredictList prompts={prompts} />
 					</div>
 				</div>
-			</section>
-
-			<section className="audio-recorder">
-				<div className="row">
-					<div className="col-12 d-flex justify-content-center align-items-center">
-						<AudioManager transcriber={transcriber} />
-						<Transcript transcribedData={transcriber.output} />
-					</div>
-				</div>
-			</section>
+			</div>
 		</div>
 	);
 }

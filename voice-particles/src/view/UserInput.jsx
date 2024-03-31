@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 
 //User input area style
@@ -14,14 +14,35 @@ const textareaStyle = {
 };
 
 UserInput.propTypes = {
+	transcribedData: PropTypes.shape({
+		chunks: PropTypes.arrayOf(
+			PropTypes.shape({
+				text: PropTypes.string,
+			}),
+		),
+	}),
 	onReceiveUserInput: PropTypes.func.isRequired,
 };
 
-export default function UserInput({ onReceiveUserInput }) {
-	const [userText, setUserText] = useState(undefined);
+export default function UserInput({ transcribedData, onReceiveUserInput }) {
+	const [userText, setUserText] = useState("");
 	const [loading, setLoading] = useState(false);
 	const textareaRef = useRef(null);
 
+	const handleTranscript = (transcribedData) => {
+		return transcribedData?.chunks
+			? transcribedData.chunks
+					.reduce((text, chunk) => `${text} ${chunk.text}`, "")
+					.trim()
+			: "";
+	};
+
+	useEffect(() => {
+		// concatenate the transcript data to the user input
+		const newInput = handleTranscript(transcribedData);
+		console.log("New input is: ", newInput);
+		setUserText(newInput.trim()); // Trim any extra space at the start or end
+	}, [transcribedData?.chunks]);
 	/**
 	 * resize the textarea based on the user input
 	 * @param {InputEvent} e
@@ -59,7 +80,7 @@ export default function UserInput({ onReceiveUserInput }) {
 	 * Send the user input to get the sentiment prediction
 	 */
 	const sendInput = () => {
-		if (userText === undefined || userText.trim() === "") {
+		if (userText.trim() === "") {
 			alert("Please enter a sentiment");
 			return;
 		}
@@ -71,7 +92,7 @@ export default function UserInput({ onReceiveUserInput }) {
 	};
 
 	return (
-		<div style={{ margin: "20px 0", width: "50vw" }}>
+		<div className="text-input">
 			<textarea
 				ref={textareaRef}
 				id="userText"
@@ -79,7 +100,7 @@ export default function UserInput({ onReceiveUserInput }) {
 				value={userText}
 				onChange={handleTextChange}
 				onKeyDown={handleKeyDown}
-				placeholder="Type your sentiment here..."
+				placeholder="👂🏼Listening to your sentiment..."
 				style={textareaStyle}
 			/>
 			<SendButton disabled={loading} onClick={sendInput} />

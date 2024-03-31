@@ -39,6 +39,7 @@ self.addEventListener("message", async (event) => {
 	// Do some work...
 	// TODO use message data
 	console.log("Worker received message: ", message);
+
 	let transcript = await transcribe(
 		message.audio,
 		message.model,
@@ -47,7 +48,7 @@ self.addEventListener("message", async (event) => {
 		message.subtask,
 		message.language,
 	);
-	console.log("test output: ", transcript);
+	console.log("transcribe worker inference: ", transcript);
 	
 	if (transcript === null) return;
 
@@ -79,9 +80,11 @@ const transcribe = async (
 	if (!isDistilWhisper && !multilingual) {
 		modelName += ".en";
 	}
-	console.log("Model name: ", modelName);
+
+	console.log("Pipeline model: ", modelName);
 
 	const p = AutomaticSpeechRecognitionPipelineFactory;
+	// Check if model needs changed
 	if (p.model !== modelName || p.quantized !== quantized) {
 		// Invalidate model if different
 		p.model = modelName;

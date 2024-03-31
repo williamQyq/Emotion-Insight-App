@@ -1,92 +1,46 @@
-import React, { useState, useCallback } from "react";
+import React, { useEffect } from "react";
 import AudioRecorder from "./AudioRecorder";
 import PropTypes from "prop-types";
-import Constants from "../utils/Constants";
+import useAudioManager from "../hooks/useAudioManager.js";
 
 export default function AudioManager({ transcriber }) {
-	const [audioData, setAudioData] = useState(undefined);
-	const [progress, setProgress] = useState(undefined);
+	const audioManager = useAudioManager();
 
-	const isAudioLoading = progress !== undefined;
-
-	const resetAudio = () => {
-		setAudioData(undefined);
-	};
-
-	const setAudioFromRecording = async (data) => {
-		resetAudio();
-		setProgress(0);
-		const blobUrl = URL.createObjectURL(data);
-		const fileReader = new FileReader();
-
-		fileReader.onprogress = (e) => {
-			setProgress((e.loaded / e.total) * 100 || 0);
-		};
-
-		fileReader.onloadend = async () => {
-			const audioCTX = new AudioContext({
-				sampleRate: Constants.SAMPLING_RATE,
-			});
-
-			const arrayBuffer = fileReader.result;
-			const decoded = await audioCTX.decodeAudioData(arrayBuffer);
-
-			// Check if audio is complete silence
-			function hasNonZeroSamples(buffer) {
-				for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
-					const samples = buffer.getChannelData(channel);
-					for (let i = 0; i < samples.length; i++) {
-						if (samples[i] !== 0) return true;
-					}
-				}
-				return false;
-			}
-
-			if (hasNonZeroSamples(decoded)) {
-				console.log("Audio is not complete silence.");
-				// Audio is likely not complete silence.
-			} else {
-				console.log("Audio is complete silence.");
-				// Audio is likely complete silence.
-			}
-			// setProgress(undefined);
-			setAudioData({
-				buffer: decoded,
-				url: blobUrl,
-				source: "RECORDING",
-				mimeType: data.type,
-			});
-		};
-		fileReader.readAsArrayBuffer(data);
-	};
+	useEffect(() => {
+		if (audioManager.isAudioLoading) {
+			console.log("audio is loading: ", audioManager.progress, "%");
+		}
+	}, [audioManager.isAudioLoading, audioManager.progress]);
 
 	return (
-		<div>
-			<div>
-				{navigator.mediaDevices && (
-					<RecordTile
-						icon={<MicrophoneIcon />}
-						text={"Record"}
-						setAudioData={(e) => {
-							transcriber.onInputChange();
-							setAudioFromRecording(e);
-						}}
-					/>
-				)}
+		<section className="audio-manager">
+			<div className="row">
+				<div className="record-tile col-6">
+					{navigator.mediaDevices && (
+						<RecordTile
+							audioManager={audioManager}
+							clearTranscript={() => transcriber.onInputChange()}
+						/>
+					)}
+				</div>
+				<div className="trans-btn col-6">
+					{audioManager.audioData && (
+						<TranscribeButton
+							onClick={() => {
+								console.log("start transcribing audio...");
+								transcriber.start(audioManager.audioData.buffer);
+							}}
+							isModelLoading={transcriber.isModelLoading}
+							isTranscribing={transcriber.isBusy}
+						/>
+					)}
+				</div>
 			</div>
-			<AudioDataBar progress={isAudioLoading ? progress : +!!audioData} />
-			{audioData && (
-				<TranscribeButton
-					onClick={() => {
-						console.log("transcribe audio");
-						transcriber.start(audioData.buffer);
-					}}
-					isModelLoading={transcriber.isModelLoading}
-					isTranscribing={transcriber.isBusy}
-				/>
-			)}
-			{transcriber.progressItems.length > 0 && <label> Loading model</label>}
-		</div>
+			<div className="row">
+				<AudioRecorder audioManager={audioManager} />
+			</div>
+			{transcriber.progressItems.length > 0 && <label> Loading model...</label>}
+		</section>
 	);
 }
 
@@ -123,72 +77,58 @@ TranscribeButton.propTypes = {
 	onClick: PropTypes.func.isRequired,
 };
 
-function RecordTile({ icon, text, setAudioData }) {
-	const [audioBlob, setAudioBlob] = useState(null);
+function RecordTile({ audioManager, clearTranscript }) {
+	const { isRecording } = audioManager;
 
-	const onRecordingComplete = (blob) => {
-		setAudioBlob(blob);
+	const toggleRecording = () => {
+		if (isRecording) {
+			audioManager.stopRecording();
+		} else {
+			clearTranscript();
+			audioManager.startRecording();
+		}
 	};
 
-	const onSubmit = useCallback(() => {
-		console.log("submitting audio data");
-		setAudioData(audioBlob);
-		//reset audio blob
-		setAudioBlob(undefined);
-	}, [audioBlob]);
 	return (
-		<div>
-			<Tile icon={icon} text={text} />
-			<AudioRecorder onRecordingComplete={onRecordingComplete} />
-			<button onClick={onSubmit}>Submit</button>
-		</div>
+		<button
+			type="button"
+			className={`btn ${isRecording ? "btn-success" : "btn-danger"}`}
+			onClick={toggleRecording}
+		>
+			<div className="col-6">
+				<Tile
+					icon={<MicrophoneIcon />}
+					text={isRecording ? "Stop" : "Record"}
+				/>
+			</div>
+		</button>
 	);
 }
 RecordTile.propTypes = {
-	icon: PropTypes.element.isRequired,
-	text: PropTypes.string,
-	setAudioData: PropTypes.func.isRequired,
+	audioManager: PropTypes.object.isRequired,
+	clearTranscript: PropTypes.func,
 };
 
 function Tile({ icon, text }) {
 	return (
-		<button className="flex items-center justify-center btn btn-secondary">
-			<div className="w-7 h-7">{icon}</div>
-			{text && <div className="text-sm text-center">{text}</div>}
-		</button>
-	);
-}
-Tile.propTypes = {
-	icon: PropTypes.element.isRequired,
-	text: PropTypes.string,
-};
-
-function AudioDataBar({ progress }) {
-	return <ProgressBar progress={`${Math.round(progress * 100)}%`} />;
-}
-AudioDataBar.propTypes = {
-	progress: PropTypes.number.isRequired,
-};
-
-function ProgressBar({ progress }) {
-	// Ensure progress is a valid percentage
-	const progressStyle = { width: `${progress}%` };
-
-	return (
-		<div className="progress" style={{ height: "4px" }}>
-			<div
-				className="progress-bar"
-				role="progressbar"
-				style={progressStyle}
-				aria-valuenow={progress}
-				aria-valuemin="0"
-				aria-valuemax="100"
-			></div>
+		<div className="row">
+			<div className="col-6 justify-content-center">
+				<div style={{ width: 28, height: 28 }}>{icon}</div>
+			</div>
+			{text && (
+				<div className="col-6 justify-content-center">
+					<div className="text-center" style={{ fontSize: "0.875rem" }}>
+						{text}
+					</div>
+				</div>
+			)}
 		</div>
 	);
 }
-ProgressBar.propTypes = {
-	progress: PropTypes.string.isRequired,
+
+Tile.propTypes = {
+	icon: PropTypes.element.isRequired,
+	text: PropTypes.string,
 };
 
 function MicrophoneIcon() {

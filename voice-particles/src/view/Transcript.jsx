@@ -6,7 +6,6 @@ export default function Transcript({ transcribedData }) {
 		<>
 			{transcribedData?.chunks &&
 				transcribedData.chunks.map((chunk, index) => {
-					console.log("transcribed Text: ", chunk.text);
 					return (
 						<div key={`${index}-${chunk.text}`}>
 							<p>{chunk.text}</p>

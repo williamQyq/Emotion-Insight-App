@@ -90,14 +90,16 @@ export function useTranscriber() {
 		setTranscript(undefined);
 	}, []);
 
+	// Post the audio data to the worker, which will transcribe it
 	const postRequest = useCallback(
 		async (audioData) => {
-			console.log("postRequest", audioData);
+			console.log("Transcriber received audio data: ", audioData);
 
 			if (audioData) {
 				setTranscript(undefined);
 				setIsBusy(true);
 
+				// handle stereo audio and mono audio
 				let audio;
 				 if (audioData.numberOfChannels === 2) {
 					const SCALING_FACTOR = Math.sqrt(2);
@@ -113,7 +115,7 @@ export function useTranscriber() {
 					// If the audio is not stereo, we can just use the first channel:
 					audio = audioData.getChannelData(0);
 				}
-				console.log("channel data", audio);
+
 				webWorker.postMessage({
 					audio,
 					model,
