@@ -92,15 +92,10 @@ function RecordTile({ audioManager, clearTranscript }) {
 	return (
 		<button
 			type="button"
-			className={`btn ${isRecording ? "btn-success" : "btn-danger"}`}
+			className={`btn ${isRecording ? "btn-danger" : "btn-success"}`}
 			onClick={toggleRecording}
 		>
-			<div className="col-6">
-				<Tile
-					icon={<MicrophoneIcon />}
-					text={isRecording ? "Stop" : "Record"}
-				/>
-			</div>
+			<Tile icon={<MicrophoneIcon />} text={isRecording ? "Stop" : "Record"} />
 		</button>
 	);
 }
@@ -112,14 +107,12 @@ RecordTile.propTypes = {
 function Tile({ icon, text }) {
 	return (
 		<div className="row">
-			<div className="col-6 justify-content-center">
+			<div className="col-4 justify-content-center">
 				<div style={{ width: 28, height: 28 }}>{icon}</div>
 			</div>
 			{text && (
-				<div className="col-6 justify-content-center">
-					<div className="text-center" style={{ fontSize: "0.875rem" }}>
-						{text}
-					</div>
+				<div className="col-8 flex justify-content-center align-items-center">
+					<div className="text-center mg-auto">{text}</div>
 				</div>
 			)}
 		</div>

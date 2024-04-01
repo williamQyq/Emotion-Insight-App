@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-export function useWorker(messageEventHandler) {
-	const [worker] = useState(() => createWorker(messageEventHandler));
+export function useWorker(path, messageEventHandler) {
+	const [worker] = useState(() => createWorker(path, messageEventHandler));
 	return worker;
 }
 
-function createWorker(messageEventHandler) {
-	const worker = new Worker("./src/worker.js",{type:"module"});
-	worker.onmessage=messageEventHandler;
+function createWorker(path, messageEventHandler) {
+	const worker = new Worker(path, { type: "module" });
+	worker.onmessage = messageEventHandler;
 	return worker;
 }

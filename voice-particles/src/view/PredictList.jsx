@@ -1,13 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import EmotionPrompt from "../models/Emotion";
 
-export default function PredictList({ prompts }) {
+export default function PredictList({ sentiment, prompt }) {
+	const [prompts, setPrompts] = useState([]);
+
+	useEffect(() => {
+		if (sentiment && prompt) {
+			// Create a new EmotionPrompt for comparison
+			const newPrompt = new EmotionPrompt(prompt, sentiment);
+
+			// Check if the new prompt is different from the last prompt added
+			if (
+				prompts.length === 0 ||
+				!arePromptsEqual(prompts[prompts.length - 1], newPrompt)
+			) {
+				setPrompts((prev) => [...prev, newPrompt]);
+			}
+		}
+	}, [sentiment, prompt]);
+
+	const arePromptsEqual = (lastPrompt, newPrompt) => {
+		return (
+			lastPrompt.prompt === newPrompt.prompt &&
+			lastPrompt.predict.label === newPrompt.predict.label
+		);
+	};
+
 	return (
-		prompts && (
+		prompts.length > 0 && (
 			<ul className="list-group">
 				{prompts.map((prompt, index) => (
 					<li key={index} className="list-group-item">
-						Sentiment: {prompt.predict}, Text: {prompt.prompt}
+						<div>
+							<p className="fw-bold mr-4">Sentiment: {prompt.predict.label}</p>
+							<p className="score">Score: {prompt.predict.score}</p>
+						</div>
+						{prompt.prompt}
 					</li>
 				))}
 			</ul>
@@ -19,7 +48,10 @@ PredictList.propTypes = {
 	prompts: PropTypes.arrayOf(
 		PropTypes.shape({
 			prompt: PropTypes.string,
-			predict: PropTypes.string,
+			predict: PropTypes.shape({
+				label: PropTypes.string,
+				score: PropTypes.number,
+			}),
 		}),
 	),
 };

@@ -1,38 +1,31 @@
 import * as THREE from "three";
 
-export default class ParticlesSphere {
+export default class ParticleSphere {
 	camera;
 	scene;
 	frameId;
 	mountRef;
 	clientWidth;
 	clientHeight;
-	// mouseX = 0;
-	// mouseY = 0;
-	systemProps = []; //emotion particle system props {color, num, size}[]
+	mouseX = 0;
+	mouseY = 0;
 
-	constructor(mountRef, particleCount = 1000, particleColor = "#000000") {
+	constructor(mountRef, particleCount, particleColor = "#000000") {
 		this.mountRef = mountRef;
 		this.particleCount = particleCount; //default particle count
 		this.particleColor = particleColor; //default color
-		this.clientWidth = this.mountRef.current.parentElement.offsetWidth;
-		this.clientHeight = this.mountRef.current.parentElement.offsetHeight;
+		this.clientWidth = this.mountRef.current.offsetWidth;
+		this.clientHeight = this.mountRef.current.offsetHeight;
 	}
 
-	init(systemProps = undefined) {
-		//update particle system props
-		if (systemProps !== undefined && systemProps.length > 0) {
-			this.systemProps = systemProps;
-			this.particleCount = systemProps.reduce((accum, system) => accum + system.num, 0);
-		}
-
+	init() {
 		//Scene setup
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera(
 			75,
 			this.clientWidth / this.clientHeight,
 			0.1,
-			1000
+			1000,
 		);
 
 		this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
@@ -42,11 +35,9 @@ export default class ParticlesSphere {
 		this.mountRef.current.appendChild(this.renderer.domElement);
 
 		this.addListener(); //add event listener : mouse move, resize
-		this.initGeometry();
 	}
 
 	addListener() {
-
 		// Mouse move event listener
 		this.mountRef.current.addEventListener(
 			"mousemove",
@@ -54,7 +45,7 @@ export default class ParticlesSphere {
 				this.mouseX = event.clientX - this.clientWidth / 2;
 				this.mouseY = event.clientY - this.clientHeight / 2;
 			},
-			false
+			false,
 		);
 
 		//resize event listener
@@ -70,7 +61,7 @@ export default class ParticlesSphere {
 				this.renderer.setSize(this.clientWidth, this.clientHeight);
 				this.initGeometry();
 			},
-			false
+			false,
 		);
 	}
 
@@ -95,46 +86,28 @@ export default class ParticlesSphere {
 		return particleSystem;
 	}
 
-	initDefaultParticlesSystem() {
-		const particleMaterial = new THREE.PointsMaterial({
-			color: this.particleColor,
-			size: 2,
-		});
-		const particleSystem = this.initParticleSystem(this.particleCount, particleMaterial);
-		//default position
-		// particleSystem.position.set(0,0,0)
-		return particleSystem;
-	}
-
-	initGeometry() {
+	initGeometry({ color = this.particleColor, num = this.particleCount } = {}) {
 		// Clearing old scene
 		while (this.scene.children.length > 0) {
 			this.scene.remove(this.scene.children[0]);
 		}
+		// default particle material
+		const particleMaterial = new THREE.PointsMaterial({
+			color,
+			size: 2,
+		});
+		const particleSystem = this.initParticleSystem(num, particleMaterial);
+
 		// Particle defualt setup
 		const particleSystemGroup = new THREE.Group();
+		particleSystemGroup.add(particleSystem);
 
-		if (this.systemProps.length === 0) {
-			console.log("No particle system props found, using default setup");
-			const particleSystem = this.initDefaultParticlesSystem();
-			particleSystemGroup.add(particleSystem);
-		} else {
-			this.systemProps.forEach((prop) => {
-				const particleMaterial = new THREE.PointsMaterial({
-					color: prop.color,
-					size: prop.size,
-				});
-				const particleSystem = this.initParticleSystem(prop.num, particleMaterial);
-				particleSystemGroup.add(particleSystem);
-			});
-		}
 		this.scene.add(particleSystemGroup);
 		// Camera position
 		this.camera.position.z = 400;
 
 		const renderingParent = new THREE.Group();
 		const resizeContainer = new THREE.Group();
-
 
 		renderingParent.add(particleSystemGroup);
 		resizeContainer.add(renderingParent);
@@ -150,5 +123,15 @@ export default class ParticlesSphere {
 			this.renderer.render(this.scene, this.camera);
 		};
 		animate();
+	}
+	dispose() {
+		if (this.frameId) {
+			cancelAnimationFrame(this.frameId);
+		}
+		if (this.renderer.domElement) {
+			this.mountRef.current.removeChild(this.renderer.domElement);
+		}
+		window.removeEventListener("resize", this.handleResize);
+		this.mountRef.current.removeEventListener("mousemove", this.onMouseMove);
 	}
 }

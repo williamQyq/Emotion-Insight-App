@@ -38,10 +38,12 @@ export default function UserInput({ transcribedData, onReceiveUserInput }) {
 	};
 
 	useEffect(() => {
-		// concatenate the transcript data to the user input
-		const newInput = handleTranscript(transcribedData);
-		console.log("New input is: ", newInput);
-		setUserText(newInput.trim()); // Trim any extra space at the start or end
+		if (transcribedData) {
+			// concatenate the transcript data to the user input
+			const newInput = handleTranscript(transcribedData);
+			console.log("New input is: ", newInput);
+			setUserText(newInput.trim()); // Trim any extra space at the start or end
+		}
 	}, [transcribedData?.chunks]);
 	/**
 	 * resize the textarea based on the user input

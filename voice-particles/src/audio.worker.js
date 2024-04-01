@@ -60,6 +60,12 @@ self.addEventListener("message", async (event) => {
 	});
 });
 
+class SentimentAnalysisPipelineFactory extends PipelineFactory {
+	static task = "sentiment-analysis";
+	static model = null;
+	static quantized = null;
+}
+
 class AutomaticSpeechRecognitionPipelineFactory extends PipelineFactory {
 	static task = "automatic-speech-recognition";
 	static model = null;

@@ -1,6 +1,5 @@
 export default class EmotionPrompt {
 	constructor(prompt, predict = null) {
-		this.emo = new Emotion();
 		this.prompt = prompt;
 
 		//if no emotion is provided, randomly pick one
@@ -12,31 +11,16 @@ export default class EmotionPrompt {
 	}
 	//randomly pick a sentiment class
 	getRandomPrediction() {
-		return this.emo.emotions[
-			Math.floor(Math.random() * 10) % this.emo.emotions.length
-		];
+		return emotions[Math.floor(Math.random() * 10) % emotions.length];
 	}
 }
-export class Emotion {
-	constructor() {
-		this.emotions = [
-			"anger",
-			"fear",
-			"joy",
-			"love",
-			"sadness",
-			"surprise",
-		];
-		this.colors = {
-			anger: "#FF0000",
-			fear: "#0000FF",
-			joy: "#FFFF00",
-			love: "#FF00FF",
-			sadness: "#00FFFF",
-			surprise: "#00FF00",
-		};
-	}
-	getEmotionColor(emo) {
-		return this.colors[emo];
-	}
-}
+
+export const emotions = ["anger", "fear", "joy", "love", "sadness", "surprise"];
+export const colors = {
+	anger: "#FF0000",
+	fear: "#0000FF",
+	joy: "#FFFF00",
+	love: "#FF00FF",
+	sadness: "#00FFFF",
+	surprise: "#00FF00",
+};
