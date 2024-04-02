@@ -1,16 +1,18 @@
-### ~~Emotion Particle System - EPS~~
 # Voice Particle System - VPS
 
-The Emotion Sentiment Particle System is an innovative visualization tool designed to display the emotional distribution of text through a dynamic and interactive particle system. By integrating natural language processing (NLP) capabilities, this system analyzes the emotional sentiment behind a user-inputted prompt and visually represents this analysis using particles of varying colors. Each color corresponds to a specific emotion, creating a vivid and intuitive representation of the text's emotional content.
+The Voice Sentiment Particle System is an innovative visualization tool designed to display the emotional distribution of text through a dynamic and interactive particle system. By integrating natural language processing (NLP) capabilities, this system analyzes the emotional sentiment behind a user-inputted prompt and visually represents this analysis using particles of varying colors. Each color corresponds to a specific emotion, creating a vivid and intuitive representation of the text's emotional content.
 
 ## Documentation
-[Project Design Documentation](./EmotionParticleSystem.pdf)
+[Project Design Documentation](./VoiceParticleSystem.pdf)
 
 ## Youtube & ScreenShot
-🥰Watch it on [Youtube](https://youtu.be/vDZ5GwFlwOQ)
+🥰Watch it on [Youtube](https://youtu.be/hps0so4NSJc)
 
-![UI](./pic/input.png)
-![Visual](./pic/visual.png)  
+![UI](./pic/main.png)
+![recording](./pic/record.png)
+![pos](./pic/pos.png)
+![neg](./pic/neg.png)
+
 
 ## Before Started
 ```Currently, the prediction is randomly selected,and the TensorFlow model is not used due to the backend requirement. Additionally, some NLP libraries for tokenization and lemmatization require worker threads, which are not supported in the browser.```
@@ -42,7 +44,7 @@ To set up the Emotion Sentiment Particle System on your local environment, follo
 npm install
 
 # Start the application
-npm start
+npm run dev
 
 ```
 
@@ -51,27 +53,38 @@ npm start
 ```bash
 .
 ├── README.md
+├── firebase.json
 ├── index.html
 ├── package-lock.json
 ├── package.json
 ├── public
 │   └── vite.svg
 ├── src
+│   ├── App.jsx
 │   ├── assets
-│   │   ├── react.svg
-│   │   └── tfjs_classifier
-│   │       └── model.json
+│   │   └── react.svg
+│   ├── audio.worker.js
+│   ├── hooks
+│   │   ├── useAudioManager.js
+│   │   ├── useFirebase.js
+│   │   ├── useSentiment.js
+│   │   ├── useTranscriber.js
+│   │   └── useWorker.js
 │   ├── main.jsx
 │   ├── models
-│   │   ├── EmotionPrompt.js
-│   │   ├── ParticlesSphere.js
-│   │   ├── Tensorflow.js
-│   │   └── nlpWorker.js
+│   │   ├── Emotion.js
+│   │   ├── Firebase.js
+│   │   └── ParticleSphere.js
+│   ├── sentiment.worker.js
+│   ├── utils
+│   │   ├── BlobFix.js
+│   │   └── Constants.js
 │   └── view
-│       ├── App.css
-│       ├── App.jsx
+│       ├── AudioManager.jsx
+│       ├── AudioRecorder.jsx
+│       ├── ParticleSphere.jsx
 │       ├── PredictList.jsx
-│       ├── Sphere.jsx
+│       ├── Transcript.jsx
 │       └── UserInput.jsx
 └── vite.config.js
 ```

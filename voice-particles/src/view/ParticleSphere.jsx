@@ -36,10 +36,7 @@ export default function ParticleSphere({ sentiment }) {
 		const color = sentiment
 			? colors[String(sentiment.label).toLocaleLowerCase()]
 			: "#000000";
-		particleSystem.initGeometry({
-			color,
-			num: 1000,
-		});
+		particleSystem.initGeometry({ color, num: 1000 });
 	}, [particleSystem, sentiment]);
 	return <div className="particle-system" ref={canvasRef} />;
 }

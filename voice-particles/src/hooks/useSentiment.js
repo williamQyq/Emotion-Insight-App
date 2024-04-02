@@ -3,18 +3,21 @@ import { useWorker } from "./useWorker";
 
 export function useSentiment() {
 	const [sentiment, setSentiment] = useState(null);
-	const webWorker = useWorker("src/sentiment.worker.js", (event) => {
-		const message = event.data;
-		switch (message.status) {
-			case "complete":
-				console.log("message from useSentiment: ", message);
-				setSentiment(message.data);
-				break;
-			case "error":
-				console.error("error", message);
-				break;
-		}
-	});
+	const webWorker = useWorker(
+		new URL("../sentiment.worker.js", import.meta.url),
+		(event) => {
+			const message = event.data;
+			switch (message.status) {
+				case "complete":
+					console.log("message from useSentiment: ", message);
+					setSentiment(message.data);
+					break;
+				case "error":
+					console.error("error", message);
+					break;
+			}
+		},
+	);
 
 	const postRequest = useCallback(
 		async (prompt) => {

@@ -9,71 +9,74 @@ export function useTranscriber() {
 
 	const [progressItems, setProgressItems] = useState([]);
 
-	const webWorker = useWorker("src/audio.worker.js", (event) => {
-		const message = event.data;
-		// Update the state with the result
-		switch (message.status) {
-			case "progress":
-				// Model file progress: update one of the progress items.
-				setProgressItems((prev) =>
-					prev.map((item) => {
-						if (item.file === message.file) {
-							return { ...item, progress: message.progress };
-						}
-						return item;
-					}),
-				);
-				break;
-			case "update":
-				// Received partial update
-				// console.log("update", message);
-				// eslint-disable-next-line no-case-declarations
-				const updateMessage = message;
-				setTranscript({
-					isBusy: true,
-					text: updateMessage.data[0],
-					chunks: updateMessage.data[1].chunks,
-				});
-				break;
-			case "complete":
-				// Received complete transcript
-				console.log("complete", message);
-				// eslint-disable-next-line no-case-declarations
-				const completeMessage = message;
-				setTranscript({
-					isBusy: false,
-					text: completeMessage.data.text,
-					chunks: completeMessage.data.chunks,
-				});
-				setIsBusy(false);
-				break;
+	const webWorker = useWorker(
+		new URL("../audio.worker.js", import.meta.url),
+		(event) => {
+			const message = event.data;
+			// Update the state with the result
+			switch (message.status) {
+				case "progress":
+					// Model file progress: update one of the progress items.
+					setProgressItems((prev) =>
+						prev.map((item) => {
+							if (item.file === message.file) {
+								return { ...item, progress: message.progress };
+							}
+							return item;
+						}),
+					);
+					break;
+				case "update":
+					// Received partial update
+					// console.log("update", message);
+					// eslint-disable-next-line no-case-declarations
+					const updateMessage = message;
+					setTranscript({
+						isBusy: true,
+						text: updateMessage.data[0],
+						chunks: updateMessage.data[1].chunks,
+					});
+					break;
+				case "complete":
+					// Received complete transcript
+					console.log("complete", message);
+					// eslint-disable-next-line no-case-declarations
+					const completeMessage = message;
+					setTranscript({
+						isBusy: false,
+						text: completeMessage.data.text,
+						chunks: completeMessage.data.chunks,
+					});
+					setIsBusy(false);
+					break;
 
-			case "initiate":
-				// Model file start load: add a new progress item to the list.
-				setIsModelLoading(true);
-				setProgressItems((prev) => [...prev, message]);
-				break;
-			case "ready":
-				setIsModelLoading(false);
-				break;
-			case "error":
-				setIsBusy(false);
-				alert(
-					`${message.data.message} This is most likely because you are using Safari on an M1/M2 Mac. Please try again from Chrome, Firefox, or Edge.\n\nIf this is not the case, please file a bug report.`,
-				);
-				break;
-			case "done":
-				// Model file loaded: remove the progress item from the list.
-				setProgressItems((prev) =>
-					prev.filter((item) => item.file !== message.file),
-				);
-				break;
+				case "initiate":
+					// Model file start load: add a new progress item to the list.
+					setIsModelLoading(true);
+					setProgressItems((prev) => [...prev, message]);
+					break;
+				case "ready":
+					setIsModelLoading(false);
+					break;
+				case "error":
+					setIsBusy(false);
+					alert(
+						`${message.data.message} This is most likely because you are using Safari on an M1/M2 Mac. Please try again from Chrome, Firefox, or Edge.\n\nIf this is not the case, please file a bug report.`,
+					);
+					break;
+				case "done":
+					// Model file loaded: remove the progress item from the list.
+					setProgressItems((prev) =>
+						prev.filter((item) => item.file !== message.file),
+					);
+					break;
 
-			default:
-				// initiate/download/done
-				break;
-		}
-	});
+				default:
+					// initiate/download/done
+					break;
+			}
+		},
+	);
 
 	const [model, setModel] = useState(Constants.DEFAULT_MODEL);
 	const [subtask, setSubtask] = useState(Constants.DEFAULT_SUBTASK);

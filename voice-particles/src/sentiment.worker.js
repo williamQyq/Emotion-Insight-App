@@ -17,6 +17,6 @@ self.addEventListener("message", async (event) => {
 	self.postMessage({
 		status: "complete",
 		task: "sentiment-analysis",
-		data: { ...out, input: message.input },
+		data: { ...out, promtp: message.prompt },
 	});
 });

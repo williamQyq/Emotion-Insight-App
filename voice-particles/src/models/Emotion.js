@@ -6,7 +6,8 @@ export default class EmotionPrompt {
 		if (predict === null) {
 			this.predict = this.getRandomPrediction();
 		} else {
-			this.predict = predict;
+			this.label = predict.lable;
+			this.score = predict.score;
 		}
 	}
 	//randomly pick a sentiment class

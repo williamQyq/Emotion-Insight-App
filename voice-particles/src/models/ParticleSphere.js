@@ -14,8 +14,8 @@ export default class ParticleSphere {
 		this.mountRef = mountRef;
 		this.particleCount = particleCount; //default particle count
 		this.particleColor = particleColor; //default color
-		this.clientWidth = this.mountRef.current.offsetWidth;
-		this.clientHeight = this.mountRef.current.offsetHeight;
+		this.clientWidth = this.mountRef.current.parentElement.offsetWidth;
+		this.clientHeight = this.mountRef.current.parentElement.offsetHeight;
 	}
 
 	init() {
@@ -35,6 +35,7 @@ export default class ParticleSphere {
 		this.mountRef.current.appendChild(this.renderer.domElement);
 
 		this.addListener(); //add event listener : mouse move, resize
+		this.initGeometry(); //init particle system
 	}
 
 	addListener() {

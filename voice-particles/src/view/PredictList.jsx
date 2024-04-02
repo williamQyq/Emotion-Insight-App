@@ -1,40 +1,51 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import EmotionPrompt from "../models/Emotion";
+import EmotionPrompt from "../models/Emotion.js";
+import { useFirebase } from "../hooks/useFirebase.js";
 
-export default function PredictList({ sentiment, prompt }) {
-	const [prompts, setPrompts] = useState([]);
+export default function PredictList({ prompts }) {
+	const [voicePrompts, setPrompts] = useState(prompts);
+	const db = useFirebase();
 
-	useEffect(() => {
-		if (sentiment && prompt) {
-			// Create a new EmotionPrompt for comparison
-			const newPrompt = new EmotionPrompt(prompt, sentiment);
-
-			// Check if the new prompt is different from the last prompt added
-			if (
-				prompts.length === 0 ||
-				!arePromptsEqual(prompts[prompts.length - 1], newPrompt)
-			) {
-				setPrompts((prev) => [...prev, newPrompt]);
-			}
-		}
-	}, [sentiment, prompt]);
-
-	const arePromptsEqual = (lastPrompt, newPrompt) => {
-		return (
-			lastPrompt.prompt === newPrompt.prompt &&
-			lastPrompt.predict.label === newPrompt.predict.label
-		);
+	const refreshPrompts = async () => {
+		const voicePrompts = await db.getPrompts();
+		setPrompts([...voicePrompts, ...prompts]);
 	};
 
+	useEffect(() => {
+		refreshPrompts();
+	}, [prompts]);
+
+	// useEffect(() => {
+	// 	if (sentiment && prompt) {
+	// 		// Create a new EmotionPrompt for comparison
+	// 		const newPrompt = new EmotionPrompt(prompt, sentiment);
+
+	// 		// Check if the new prompt is different from the last prompt added
+	// 		if (
+	// 			prompts.length === 0 ||
+	// 			!arePromptsEqual(prompts[prompts.length - 1], newPrompt)
+	// 		) {
+	// 			setPrompts((prev) => [...prev, newPrompt]);
+	// 		}
+	// 	}
+	// }, [sentiment, prompt]);
+
+	// const arePromptsEqual = (lastPrompt, newPrompt) => {
+	// 	return (
+	// 		lastPrompt.prompt === newPrompt.prompt &&
+	// 		lastPrompt.label === newPrompt.label
+	// 	);
+	// };
+
 	return (
-		prompts.length > 0 && (
+		voicePrompts.length > 0 && (
 			<ul className="list-group">
-				{prompts.map((prompt, index) => (
+				{voicePrompts.map((prompt, index) => (
 					<li key={index} className="list-group-item">
 						<div>
-							<p className="fw-bold mr-4">Sentiment: {prompt.predict.label}</p>
-							<p className="score">Score: {prompt.predict.score}</p>
+							<p className="fw-bold mr-4">Sentiment: {prompt.label}</p>
+							<p className="score">Score: {prompt.score}</p>
 						</div>
 						{prompt.prompt}
 					</li>
