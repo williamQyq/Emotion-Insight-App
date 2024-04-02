@@ -14,9 +14,6 @@ The Voice Sentiment Particle System is an innovative visualization tool designed
 ![neg](./pic/neg.png)
 
 
-## Before Started
-```Currently, the prediction is randomly selected,and the TensorFlow model is not used due to the backend requirement. Additionally, some NLP libraries for tokenization and lemmatization require worker threads, which are not supported in the browser.```
-
 ## Features
 
 - **User Input**: Allows users to enter text prompts for real-time emotional analysis.
@@ -27,7 +24,7 @@ The Voice Sentiment Particle System is an innovative visualization tool designed
 
 ## How It Works
 
-1. **Input Text**: Users enter text into the provided input field. This can be anything from a sentence to a paragraph, expressing thoughts, stories, or any textual content.
+1. **Input Text**: Users use voice or enter text into the provided input field. This can be anything from a sentence to a paragraph, expressing thoughts, stories, or any textual content.
 
 2. **Emotion Analysis**: Upon submission, the text is fed into an NLP model trained to identify and predict emotional sentiments. The model categorizes the emotions present in the text into predefined categories such as happiness, sadness, anger, surprise, and more.
 
@@ -37,7 +34,7 @@ The Voice Sentiment Particle System is an innovative visualization tool designed
 
 ## Installation
 
-To set up the Emotion Sentiment Particle System on your local environment, follow these steps:
+To set up the Voice Particle System on your local environment, follow these steps:
 
 ```bash
 # Install dependencies
