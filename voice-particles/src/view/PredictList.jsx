@@ -16,28 +16,6 @@ export default function PredictList({ prompts }) {
 		refreshPrompts();
 	}, [prompts]);
 
-	// useEffect(() => {
-	// 	if (sentiment && prompt) {
-	// 		// Create a new EmotionPrompt for comparison
-	// 		const newPrompt = new EmotionPrompt(prompt, sentiment);
-
-	// 		// Check if the new prompt is different from the last prompt added
-	// 		if (
-	// 			prompts.length === 0 ||
-	// 			!arePromptsEqual(prompts[prompts.length - 1], newPrompt)
-	// 		) {
-	// 			setPrompts((prev) => [...prev, newPrompt]);
-	// 		}
-	// 	}
-	// }, [sentiment, prompt]);
-
-	// const arePromptsEqual = (lastPrompt, newPrompt) => {
-	// 	return (
-	// 		lastPrompt.prompt === newPrompt.prompt &&
-	// 		lastPrompt.label === newPrompt.label
-	// 	);
-	// };
-
 	return (
 		voicePrompts.length > 0 && (
 			<ul className="list-group">

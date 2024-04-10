@@ -6,7 +6,8 @@ The Voice Sentiment Particle System is an innovative visualization tool designed
 [Project Design Documentation](./VoiceParticleSystem.pdf)
 
 ## Youtube & ScreenShot
-🥰Watch it on [Youtube](https://youtu.be/hps0so4NSJc)
+🥰Youtube Showcase [Youtube](https://youtu.be/hps0so4NSJc)
+Youtube Cypress test [Youtube](https://youtu.be/hZU07kvV5Vg)
 
 ![UI](./pic/main.png)
 ![recording](./pic/record.png)
