@@ -2,6 +2,12 @@
 Author: Yuqing Qiao  
 Date: 08/05/2024
 
+## Project Overview
+
+- **Arxiv RAG Server**: Located in `rag-server/`, this module handles related works for the RAG server.
+- **Front-End UI**: The user interface is in `arxiv-qa/`.
+- **Audio Transcribe Demo**: Found in `audio-transcribe/`, this demo app leverages Hugging Face's Transformer models for audio transcription.
+
 ## To Begin With
 
 1. **Download the arxiv-metadata set from Kaggle**  
