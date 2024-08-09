@@ -1,2 +1,8 @@
 node_modules/
 .vscode/
+__pycache__/
+**/*/volumes/*
+.env
+*.db
+arxiv-metadata-oai-snapshot.json
+.github/workflows/

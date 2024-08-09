@@ -1,0 +1,9 @@
+name: rag-server
+
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - kaggle=1.6.17
+
+  

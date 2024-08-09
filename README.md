@@ -1,83 +1,67 @@
-# Voice Particle System - VPS
+# Arxiv QA Agent
+Author: Yuqing Qiao  
+Date: 08/05/2024
 
-The Voice Sentiment Particle System is an innovative visualization tool designed to display the emotional distribution of text through a dynamic and interactive particle system. By integrating natural language processing (NLP) capabilities, this system analyzes the emotional sentiment behind a user-inputted prompt and visually represents this analysis using particles of varying colors. Each color corresponds to a specific emotion, creating a vivid and intuitive representation of the text's emotional content.
+## To Begin With
 
-## Cypress Testing
-1. Test text area should take inputs.
-2. Test List has items.
-3. Test List properly render items after user add one.
-4. Test List shows properly text.
-5. Test time duration function correctly when recording.
+1. **Download the arxiv-metadata set from Kaggle**  
+    cwd: rag-server/
+   - Install the required packages using pip:
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - Or use the `environment.yaml` to create a conda environment.
 
-## Youtube
-🥰Youtube Showcase [Youtube](https://youtu.be/hps0so4NSJc)
-Youtube Cypress [Youtube](https://youtu.be/hZU07kvV5Vg)
+2. **Prepare the arxiv-metadata-oai-snapshot**  
+    cwd: rag-server/
+   - Run `setup.sh` to prepare the `arxiv-metadata-oai-snapshot.json`, which contains 2.5M rows of arxiv data:
+     ```bash
+     bash setup.sh
+     ```
 
-![UI](./pic/main.png)
-![recording](./pic/record.png)
-![pos](./pic/pos.png)
-![neg](./pic/neg.png)
+3. **Start the Milvus DB**  
+    cwd: rag-server/
+   - Start the Milvus database using Docker Compose:
+     ```bash
+     cd ./milvus_server && docker compose up
+     ```
+   - Or, to run the Docker container manually:
+     ```bash
+     bash rag-server/milvus_server/standalone_embed.sh start
+     ```
 
-## Features
+   - To stop the volume:
+     ```bash
+     bash rag-server/milvus_server/standalone_embed.sh stop
+     ```
 
-- **Sentiment Analysis**: Utilize Huggingface NLP models to predict the sentiment of the provided text.
-- **Whisper Voice to text**: Utilize the Huggingface whisper model to transcribe audio to text.
+   - To delete the volume:
+     ```bash
+     bash rag-server/milvus_server/standalone_embed.sh delete
+     ```
 
-## Documentation
-[Project Design Documentation](./VoiceParticleSystem.pdf)
+4. **Initialize the Database and Load Data**  
+    CWD: `rag-server/`
+   - The database is now initialized with empty entities. You may set the data limit to limit the number of data to be loaded in the data_loader.py. To load the dataset from `.json`,  
+    use the data loader:
+     ```bash
+     python -m src.data_loader
+     ```
 
-## Installation
+5. **Run the RAG Paper Demo**
 
-To set up the Voice Particle System on your local environment, follow these steps:
+   - To run the RAG paper demo, execute the following command in the `rag-server` directory:
+     ```bash
+     python -m app
+     ```
 
-```bash
-# Install dependencies
-npm install
+## Project Files Overview
 
-# Start the application
-npm run dev
+- **`server.py`**: Hosts the API to retrieve arxiv paper data and answer prompt questions.
 
-```
+- **`app.py`**: Handles the RAG model's response to user prompts, providing a UI and hosting through Gradio.
 
-## File Structure
+### React Front-end: `arxiv-qa/`
 
-```bash
-.
-├── README.md
-├── firebase.json
-├── index.html
-├── package-lock.json
-├── package.json
-├── public
-│   └── vite.svg
-├── src
-│   ├── App.jsx
-│   ├── assets
-│   │   └── react.svg
-│   ├── audio.worker.js
-│   ├── hooks
-│   │   ├── useAudioManager.js
-│   │   ├── useFirebase.js
-│   │   ├── useSentiment.js
-│   │   ├── useTranscriber.js
-│   │   └── useWorker.js
-│   ├── main.jsx
-│   ├── models
-│   │   ├── Emotion.js
-│   │   ├── Firebase.js
-│   │   └── ParticleSphere.js
-│   ├── sentiment.worker.js
-│   ├── utils
-│   │   ├── BlobFix.js
-│   │   └── Constants.js
-│   └── view
-│       ├── AudioManager.jsx
-│       ├── AudioRecorder.jsx
-│       ├── ParticleSphere.jsx
-│       ├── PredictList.jsx
-│       ├── Transcript.jsx
-│       └── UserInput.jsx
-└── vite.config.js
-```
-
-
+- **Prettier & ESLint Setup Reference**:  
+  [How to setup ESLint and Prettier for your React apps](https://dev.to/thomaslombart/how-to-setup-eslint-and-prettier-for-your-react-apps-1n42)
