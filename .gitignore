@@ -1,8 +1,11 @@
 node_modules/
-.vscode/
 __pycache__/
-**/*/volumes/*
+.vscode/
 .env
 *.db
 arxiv-metadata-oai-snapshot.json
 .github/workflows/
+
+/rag-server/docker/*
+!/rag-server/docker/docker-compose.yml
+!/rag-server/docker/standalone_embed.sh

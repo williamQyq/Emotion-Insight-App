@@ -3,7 +3,7 @@
 # Define variables
 DATASET_URL="Cornell-University/arxiv"
 ZIP_FILE="arxiv.zip"
-DEST_DIR="arxiv_data"
+DEST_DIR="src/data/"
 
 # Check if Kaggle CLI is installed
 if ! command -v kaggle &> /dev/null; then

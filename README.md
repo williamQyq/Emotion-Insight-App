@@ -1,6 +1,6 @@
-# Arxiv QA Agent
-Author: Yuqing Qiao  
-Date: 08/05/2024
+## What is RAGNewsBoy 📆
+
+RAGNewsBoy aims to develop a new type of recommendation systems that provide users with relevant technology news, articles, videos, and academic papers based on their search prompts. This system will offer high-level insights by intelligently curating and presenting content that aligns with the user's interests and queries.
 
 ## Project Overview
 
@@ -10,64 +10,58 @@ Date: 08/05/2024
 
 ## To Begin With
 
-1. **Download the arxiv-metadata set from Kaggle**  
-    cwd: rag-server/
-   - Install the required packages using pip:
-     ```bash
-     pip install -r requirements.txt
-     ```
-   - Or use the `environment.yaml` to create a conda environment.
+### arXiv RAG QA
 
-2. **Prepare the arxiv-metadata-oai-snapshot**  
-    cwd: rag-server/
-   - Run `setup.sh` to prepare the `arxiv-metadata-oai-snapshot.json`, which contains 2.5M rows of arxiv data:
-     ```bash
-     bash setup.sh
-     ```
+1. Prepare the dataset contains arXiv papers info.
 
-3. **Start the Milvus DB**  
-    cwd: rag-server/
-   - Start the Milvus database using Docker Compose:
-     ```bash
-     cd ./milvus_server && docker compose up
-     ```
-   - Or, to run the Docker container manually:
-     ```bash
-     bash rag-server/milvus_server/standalone_embed.sh start
-     ```
+   > Install the required packages:
+   >
+   > ```bash
+   > #cwd: rag-server/
+   > pip install -r requirements.txt
+   > ```
 
-   - To stop the volume:
-     ```bash
-     bash rag-server/milvus_server/standalone_embed.sh stop
-     ```
+- Or use the `environment.yaml` to create a conda environment.
 
-   - To delete the volume:
-     ```bash
-     bash rag-server/milvus_server/standalone_embed.sh delete
-     ```
+   > Prepare the `arxiv-metadata-oai-snapshot.json`, which contains 2.5M rows of arxiv data:
+   >
+   > ```bash
+   > bash setup.sh
+   > ```
 
-4. **Initialize the Database and Load Data**  
-    CWD: `rag-server/`
-   - The database is now initialized with empty entities. You may set the data limit to limit the number of data to be loaded in the data_loader.py. To load the dataset from `.json`,  
-    use the data loader:
-     ```bash
-     python -m src.data_loader
-     ```
+2. Milvus vector database
 
-5. **Run the RAG Paper Demo**
+   > Using Docker:
+   >
+   > ```bash
+   > # start docker
+   > bash rag-server/docker/standalone_embed.sh start
+   > 
+   > # to stop
+   > bash rag-server/milvus_server/standalone_embed.sh stop
+   >
+   > # to delete volumes
+   > bash rag-server/milvus_server/standalone_embed.sh delete
+   >
+   > ```
 
-   - To run the RAG paper demo, execute the following command in the `rag-server` directory:
-     ```bash
-     python -m app
-     ```
+3. Load data
+   > ```bash
+   > python -m arxiv.data.data_loader --limit {DATA_LIMIT}
+   > ```
 
-## Project Files Overview
+4. Demo
+   > ```bash
+   > python -m arxiv_app
+   > ```
 
-- **`server.py`**: Hosts the API to retrieve arxiv paper data and answer prompt questions.
+## Launch web 
 
-- **`app.py`**: Handles the RAG model's response to user prompts, providing a UI and hosting through Gradio.
+```bash
+# cwd: arxiv-qa/
+npm run dev
+```
 
-### React Front-end: `arxiv-qa/`
+### References
 
-- **Prettier & ESLint Setup Reference**:  
-  [How to setup ESLint and Prettier for your React apps](https://dev.to/thomaslombart/how-to-setup-eslint-and-prettier-for-your-react-apps-1n42)
+- [How to setup ESLint and Prettier for your React apps](https://dev.to/thomaslombart/how-to-setup-eslint-and-prettier-for-your-react-apps-1n42)
